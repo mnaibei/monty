@@ -1,83 +1,52 @@
-#include "monty.h"
-stack_t *head = NULL;
+#ifndef MONTY_H
+#define MONTY_H
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+/**
+ * struct stack_s - doubly linked list representation of a stack (or queue)
+ * @n: integer
+ * @prev: points to the previous element of the stack (or queue)
+ * @next: points to the next element of the stack (or queue)
+ *
+ * Description: doubly linked list node structure
+ * for stack, queues, LIFO, FIFO Holberton project
+ */
+typedef struct stack_s
+{
+int n;
+struct stack_s *prev;
+struct stack_s *next;
+} stack_t;
 
 /**
- * main - entry point
- * @argc: arguments count
- * @argv: list of arguments
- * Return: always 0
+ * struct instruction_s - opcode and its function
+ * @opcode: the opcode
+ * @f: function to handle the opcode
+ *
+ * Description: opcode and its function
+ * for stack, queues, LIFO, FIFO Holberton project
  */
-
-int main(int argc, char *argv[])
+typedef struct instruction_s
 {
-	if (argc != 2)
-	{
-		fprintf(stderr, "USAGE: monty file\n");
-		exit(EXIT_FAILURE);
-	}
-	open_file(argv[1]);
-	free_nodes();
-	return (0);
-}
+char *opcode;
+void (*f)(stack_t **stack, unsigned int line_number);
+} instruction_t;
 
-/**
- * create_node - Creates a node.
- * @n: Number to go inside the node.
- * Return: Upon sucess a pointer to the node. Otherwise NULL.
- */
-stack_t *create_node(int n)
-{
-	stack_t *node;
-
-	node = malloc(sizeof(stack_t));
-	if (node == NULL)
-		err(4);
-	node->next = NULL;
-	node->prev = NULL;
-	node->n = n;
-	return (node);
-}
-
-/**
- * free_nodes - Frees nodes in the stack.
- */
-void free_nodes(void)
-{
-	stack_t *tmp;
-
-	if (head == NULL)
-		return;
-
-	while (head != NULL)
-	{
-		tmp = head;
-		head = head->next;
-		free(tmp);
-	}
-}
-
-
-/**
- * add_to_queue - Adds a node to the queue.
- * @new_node: Pointer to the new node.
- * @ln: line number of the opcode.
- */
-void add_to_queue(stack_t **new_node, __attribute__((unused))unsigned int ln)
-{
-	stack_t *tmp;
-
-	if (new_node == NULL || *new_node == NULL)
-		exit(EXIT_FAILURE);
-	if (head == NULL)
-	{
-		head = *new_node;
-		return;
-	}
-	tmp = head;
-	while (tmp->next != NULL)
-		tmp = tmp->next;
-
-	tmp->next = *new_node;
-	(*new_node)->prev = tmp;
-
-}
+extern char **curIns;
+void getLinez(char *fileName);
+void setGlobalVarArray(char *line, int lineNum, stack_t **head, FILE *file);
+void rnOp(instruction_t fL[], int lNum, stack_t **head, char *buf, FILE *file);
+void exitFunc(stack_t **stack, char *buf, FILE *file);
+int checkForChars(char *str);
+void pushOp(stack_t **stack, unsigned int line_number);
+void pallOp(stack_t **stack, unsigned int line_number);
+void pintOp(stack_t **stack, unsigned int line_number);
+void popOp(stack_t **stack, unsigned int line_number);
+void swapOp(stack_t **stack, unsigned int line_number);
+void addOp(stack_t **stack, unsigned int line_number);
+void nopOp(stack_t **stack, unsigned int line_number);
+void freeList(stack_t *head);
+#endif
